@@ -2,6 +2,8 @@ Smart Content Moderator API
 
 A FastAPI-based backend service for moderating user-submitted text and image content using Google Gemini AI. The service stores moderation results in a database, sends real-time notifications via Slack for inappropriate content, and provides analytics.
 
+🚀 Quick Start: See Setup Instructions below to run locally and test endpoints via Swagger UI (/docs).
+
 ✅ Features Implemented
 
 ✔ Text Moderation – Classifies text as safe, toxic, spam, or harassment using Gemini API.
@@ -23,6 +25,8 @@ Gemini AI API (text & image moderation)
 Slack Webhooks (for alerts)
 
 Python 3.12
+
+⚠️ Note: PostgreSQL was initially planned, but due to setup challenges in the limited timeframe, SQLite was used for persistence.
 
 ✅ Project Structure
 Smart_Content_Moderator_API/
@@ -100,23 +104,31 @@ Response:
 Slack Alerts: When classification ≠ safe, a message is sent to a configured Slack channel with details.
 
 ✅ Setup Instructions
-1. Clone & Install
+
+Clone & Install
+
 git clone <repo-url>
 cd Smart_Content_Moderator_API
 pip install -r requirements.txt
 
-2. Configure Environment
 
-Create .env:
+Configure Environment
+Create a .env file with:
 
 DATABASE_URL=sqlite:///./moderator.db
 GEMINI_API_KEY=your_gemini_api_key
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/xxxx/yyyy/zzzz
 
-3. Run the App
+
+Run the App
+
 python start.py
 
-4. Test the API
-   python test_api.py
 
-5. Access App after running both commands seperate terminals at http://localhost:8000/docs
+Test the API
+
+python test_api.py
+
+
+Access the API docs
+Go to: http://localhost:8000/docs
