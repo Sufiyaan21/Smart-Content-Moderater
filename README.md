@@ -105,14 +105,14 @@ Slack Alerts: When classification ≠ safe, a message is sent to a configured Sl
 
 ✅ Setup Instructions
 
-Clone & Install
+1) Clone & Install
 
 git clone <repo-url>
 cd Smart_Content_Moderator_API
 pip install -r requirements.txt
 
 
-Configure Environment
+2) Configure Environment
 Create a .env file with:
 
 DATABASE_URL=sqlite:///./moderator.db
@@ -120,15 +120,13 @@ GEMINI_API_KEY=your_gemini_api_key
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/xxxx/yyyy/zzzz
 
 
-Run the App
-
+3) Run the App
 python start.py
 
 
-Test the API
-
+4)Test the API
 python test_api.py
 
 
-Access the API docs
+5)Access the API docs
 Go to: http://localhost:8000/docs
