@@ -1,454 +1,122 @@
-# Smart Content Moderator API
+Smart Content Moderator API
 
-A FastAPI-based content moderation service that analyzes text and image content for inappropriate material using Google Gemini API, stores results in PostgreSQL, and sends notifications via Slack and email.
+A FastAPI-based backend service for moderating user-submitted text and image content using Google Gemini AI. The service stores moderation results in a database, sends real-time notifications via Slack for inappropriate content, and provides analytics.
 
-## Features
+✅ Features Implemented
 
-- **Text Moderation**: Analyze text content for toxicity, spam, harassment, and inappropriate content
-- **Image Moderation**: Analyze images for inappropriate content using Google Gemini Vision
-- **Content Deduplication**: Hash-based content caching to avoid re-analyzing duplicate content
-- **Background Notifications**: Asynchronous Slack and email alerts for flagged content
-- **Analytics**: User-specific and system-wide analytics and reporting
-- **RESTful API**: Clean, documented API endpoints with proper status codes
-- **Database Persistence**: PostgreSQL with SQLAlchemy ORM and Alembic migrations
-- **Docker Support**: Complete containerization with Docker and Docker Compose
+✔ Text Moderation – Classifies text as safe, toxic, spam, or harassment using Gemini API.
+✔ Image Moderation – Analyzes images for unsafe content using Gemini Vision API.
+✔ Slack Integration – Sends alerts when inappropriate content is detected.
+✔ Database Storage – Uses SQLite for persistence.
+✔ Analytics Endpoint – Provides summary of moderation requests by user.
 
-## Tech Stack
+✅ Tech Stack
 
-- **Backend**: FastAPI with async/await
-- **Database**: PostgreSQL with SQLAlchemy ORM
-- **Migrations**: Alembic
-- **AI/ML**: Google Gemini API (gemini-pro for text, gemini-pro-vision for images)
-- **Notifications**: Slack Webhooks, Brevo (Sendinblue) Email API
-- **Logging**: Structured logging with structlog
-- **Containerization**: Docker & Docker Compose
+FastAPI (async API framework)
 
-## Project Structure
+SQLite (lightweight database)
 
-```
+SQLAlchemy (ORM)
+
+Gemini AI API (text & image moderation)
+
+Slack Webhooks (for alerts)
+
+Python 3.12
+
+✅ Project Structure
 Smart_Content_Moderator_API/
-├── app/
-│   ├── main.py                 # FastAPI application entry point
-│   ├── core/                   # Configuration and logging
-│   │   ├── config.py          # Settings and environment variables
-│   │   └── logger.py          # Structured logging setup
-│   ├── db/                    # Database configuration
-│   │   └── base.py           # SQLAlchemy setup and session management
-│   ├── models/                # SQLAlchemy models
-│   │   └── models.py         # Database models and enums
-│   ├── routes/                # API routes
-│   │   ├── moderation.py     # Text and image moderation endpoints
-│   │   └── analytics.py      # Analytics endpoints
-│   ├── schemas/               # Pydantic schemas
-│   │   └── schemas.py        # Request/response models
-│   ├── services/              # Business logic services
-│   │   ├── llm_service.py    # Google Gemini API integration
-│   │   ├── image_service.py  # Image processing utilities
-│   │   └── notification_service.py # Slack and email notifications
-│   └── utils/                 # Utility functions
-│       └── hashing.py        # Content hashing utilities
-├── alembic/                   # Database migrations
-├── requirements.txt           # Python dependencies
-├── Dockerfile                 # Multi-stage Docker build
-├── docker-compose.yml         # Docker Compose configuration
-├── alembic.ini               # Alembic configuration
-└── README.md                 # This file
-```
+│
+├── start.py               # App entry point
+├── config.py              # Env configuration
+├── database.py            # DB setup (SQLite)
+├── models.py              # ORM models
+├── routes/
+│   ├── text_moderation.py
+│   ├── image_moderation.py
+│   └── analytics.py
+├── services/
+│   ├── moderation_service.py
+│   ├── slack_service.py
+│   └── gemini_service.py
+└── README.md
 
-## Quick Start
+✅ API Endpoints
+1. POST /api/v1/moderate/text
 
-### Prerequisites
+Analyze text content for inappropriate language.
 
-- Python 3.11+
-- PostgreSQL 15+
-- Docker & Docker Compose (optional)
-- Google Gemini API key
-- Slack Webhook URL (optional)
-- Brevo API key (optional)
+Request:
 
-### Environment Setup
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd Smart_Content_Moderator_API
-```
-
-2. Create a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Create environment file:
-```bash
-cp env.example .env
-```
-
-5. Configure environment variables in `.env`:
-```env
-# Database Configuration
-DATABASE_URL=postgresql://user:password@localhost:5432/content_moderator
-
-# Google Gemini API
-GEMINI_API_KEY=your_gemini_api_key_here
-
-# Slack Configuration (optional)
-SLACK_WEBHOOK_URL=your_slack_webhook_url_here
-
-# Brevo Email API (optional)
-BREVO_API_KEY=your_brevo_api_key_here
-BREVO_SENDER_EMAIL=noreply@yourdomain.com
-
-# Application Configuration
-APP_NAME=Smart Content Moderator API
-DEBUG=True
-LOG_LEVEL=INFO
-```
-
-### Database Setup
-
-1. Create PostgreSQL database:
-```sql
-CREATE DATABASE content_moderator;
-```
-
-2. Run database migrations:
-```bash
-alembic upgrade head
-```
-
-### Running the Application
-
-#### Option 1: Local Development
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-#### Option 2: Docker Compose
-```bash
-docker-compose up --build
-```
-
-The API will be available at `http://localhost:8000`
-
-## API Documentation
-
-### Base URL
-```
-http://localhost:8000
-```
-
-### Authentication
-Currently, the API doesn't require authentication. In production, implement proper authentication mechanisms.
-
-### Endpoints
-
-#### 1. Health Check
-```http
-GET /health
-```
-
-**Response:**
-```json
-{
-  "status": "healthy",
-  "timestamp": "2024-01-01T12:00:00",
-  "version": "1.0.0"
-}
-```
-
-#### 2. Text Moderation
-```http
-POST /api/v1/moderate/text
-```
-
-**Request Body:**
-```json
 {
   "email": "user@example.com",
-  "text": "Text content to analyze"
+  "text": "This is a sample text"
 }
-```
 
-**Response:**
-```json
+
+Response:
+
 {
-  "success": true,
-  "request_id": 123,
   "classification": "safe",
   "confidence": 0.95,
-  "reasoning": "Content appears to be appropriate and harmless",
-  "message": "Content analyzed successfully"
+  "reasoning": "No harmful content detected"
 }
-```
 
-#### 3. Image Moderation
-```http
-POST /api/v1/moderate/image
-```
+2. POST /api/v1/moderate/image
 
-**Request Body:**
-```json
+Analyze image content for inappropriate material.
+
+Request:
+
+multipart/form-data with:
+
+email (string)
+
+file (image)
+
+Response:
+
 {
-  "email": "user@example.com",
-  "image_url": "https://example.com/image.jpg"
-}
-```
-
-OR
-
-```json
-{
-  "email": "user@example.com",
-  "image_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "request_id": 124,
   "classification": "safe",
-  "confidence": 0.92,
-  "reasoning": "Image contains appropriate content",
-  "message": "Content analyzed successfully"
+  "confidence": 0.90,
+  "reasoning": "Image is appropriate"
 }
-```
 
-#### 4. User Analytics
-```http
-GET /api/v1/analytics/summary?user=user@example.com
-```
+3. GET /api/v1/analytics/summary?user=email@example.com
 
-**Response:**
-```json
+Get moderation summary for a specific user.
+
+Response:
+
 {
-  "success": true,
-  "data": {
-    "email": "user@example.com",
-    "total_requests": 10,
-    "text_requests": 7,
-    "image_requests": 3,
-    "safe_content": 8,
-    "flagged_content": 2,
-    "toxic_content": 1,
-    "spam_content": 0,
-    "harassment_content": 1,
-    "inappropriate_content": 0,
-    "average_confidence": 0.89,
-    "last_request_date": "2024-01-01T12:00:00"
-  },
-  "message": "Analytics summary retrieved successfully"
+  "total_requests": 5,
+  "safe": 4,
+  "toxic": 1,
+  "last_activity": "2025-08-25T10:15:00"
 }
-```
 
-#### 5. All Users Analytics
-```http
-GET /api/v1/analytics/summary/all
-```
+✅ Notifications
 
-**Response:**
-```json
-{
-  "success": true,
-  "overall_stats": {
-    "total_users": 5,
-    "total_requests": 50,
-    "total_flagged_content": 8,
-    "flag_rate": 16.0
-  },
-  "user_analytics": {
-    "user1@example.com": {
-      "total_requests": 10,
-      "text_requests": 7,
-      "image_requests": 3,
-      "safe_content": 8,
-      "flagged_content": 2,
-      "toxic_content": 1,
-      "spam_content": 0,
-      "harassment_content": 1,
-      "inappropriate_content": 0,
-      "average_confidence": 0.89,
-      "last_request_date": "2024-01-01T12:00:00"
-    }
-  },
-  "message": "All users analytics summary retrieved successfully"
-}
-```
+Slack Alerts: When classification ≠ safe, a message is sent to a configured Slack channel with details.
 
-### Classification Types
+✅ Setup Instructions
+1. Clone & Install
+git clone <repo-url>
+cd Smart_Content_Moderator_API
+pip install -r requirements.txt
 
-- **safe**: Appropriate and harmless content
-- **toxic**: Hate speech, offensive language, or harmful content
-- **spam**: Unwanted promotional content, scams, or repetitive messages
-- **harassment**: Bullying, threats, or targeted abuse
-- **inappropriate**: Content that violates community guidelines
+2. Configure Environment
 
-## Database Schema
+Create .env:
 
-### Tables
+DATABASE_URL=sqlite:///./moderator.db
+GEMINI_API_KEY=your_gemini_api_key
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/xxxx/yyyy/zzzz
 
-#### 1. moderation_requests
-- `id` (Primary Key)
-- `email` (User email)
-- `content_type` (text/image)
-- `content_hash` (SHA-256 hash of content)
-- `status` (pending/processing/completed/failed)
-- `created_at` (Timestamp)
-- `updated_at` (Timestamp)
+3. Run the App
+python start.py
 
-#### 2. moderation_results
-- `id` (Primary Key)
-- `request_id` (Foreign Key to moderation_requests)
-- `classification` (safe/toxic/spam/harassment/inappropriate)
-- `confidence` (Float 0.0-1.0)
-- `reasoning` (Text explanation)
-- `llm_response` (Raw LLM response)
-- `created_at` (Timestamp)
+4. Test the API
+   python test_api.py
 
-#### 3. notification_logs
-- `id` (Primary Key)
-- `request_id` (Foreign Key to moderation_requests)
-- `channel` (slack/email)
-- `status` (pending/sent/failed)
-- `error_message` (Error details if failed)
-- `sent_at` (Timestamp)
-- `created_at` (Timestamp)
-
-## Configuration
-
-### Environment Variables
-
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | Yes | - |
-| `GEMINI_API_KEY` | Google Gemini API key | Yes | - |
-| `SLACK_WEBHOOK_URL` | Slack webhook URL | No | - |
-| `BREVO_API_KEY` | Brevo email API key | No | - |
-| `BREVO_SENDER_EMAIL` | Sender email for notifications | No | - |
-| `DEBUG` | Enable debug mode | No | False |
-| `LOG_LEVEL` | Logging level | No | INFO |
-
-## Development
-
-### Running Tests
-```bash
-# Install test dependencies
-pip install pytest pytest-asyncio httpx
-
-# Run tests
-pytest
-```
-
-### Database Migrations
-```bash
-# Create new migration
-alembic revision --autogenerate -m "Description of changes"
-
-# Apply migrations
-alembic upgrade head
-
-# Rollback migration
-alembic downgrade -1
-```
-
-### Code Formatting
-```bash
-# Install formatting tools
-pip install black isort
-
-# Format code
-black app/
-isort app/
-```
-
-## Deployment
-
-### Docker Deployment
-```bash
-# Build and run with Docker Compose
-docker-compose up --build -d
-
-# View logs
-docker-compose logs -f api
-
-# Stop services
-docker-compose down
-```
-
-### Production Considerations
-
-1. **Security**:
-   - Implement proper authentication and authorization
-   - Use HTTPS in production
-   - Secure environment variables
-   - Rate limiting
-
-2. **Performance**:
-   - Database connection pooling
-   - Redis caching for frequent requests
-   - Load balancing for high traffic
-
-3. **Monitoring**:
-   - Application metrics
-   - Database performance monitoring
-   - Error tracking and alerting
-
-4. **Backup**:
-   - Regular database backups
-   - Log rotation and archiving
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Database Connection Error**:
-   - Verify PostgreSQL is running
-   - Check DATABASE_URL format
-   - Ensure database exists
-
-2. **Gemini API Error**:
-   - Verify GEMINI_API_KEY is valid
-   - Check API quota limits
-   - Ensure internet connectivity
-
-3. **Image Processing Error**:
-   - Verify image format is supported
-   - Check image file size limits
-   - Ensure image URL is accessible
-
-### Logs
-Application logs are structured and include:
-- Request/response logging
-- Error details with stack traces
-- Performance metrics
-- Database operation logs
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support and questions:
-- Create an issue in the repository
-- Check the API documentation at `/docs`
-- Review the logs for error details
-
-
-
+5. Access App after running both commands seperate terminals at http://localhost:8000/docs
